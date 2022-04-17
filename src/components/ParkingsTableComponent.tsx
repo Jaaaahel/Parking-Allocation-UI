@@ -1,5 +1,5 @@
-import { useEffect, useImperativeHandle, useRef, useState } from "react";
-import useAxios from "axios-hooks";
+import { useEffect, useImperativeHandle, useRef, useState } from 'react';
+import useAxios from 'axios-hooks';
 import {
   AlertDialog,
   AlertDialogBody,
@@ -18,17 +18,17 @@ import {
   Thead,
   Tr,
   UnorderedList,
-  useDisclosure,
-} from "@chakra-ui/react";
-import { Parking } from "../entities";
-import dayjs from "dayjs";
-import relativeTime from "dayjs/plugin/relativeTime";
-import { getInstance } from "../services/api";
+  useDisclosure
+} from '@chakra-ui/react';
+import { Parking } from '../entities';
+import dayjs from 'dayjs';
+import relativeTime from 'dayjs/plugin/relativeTime';
+import { getInstance } from '../services/api';
 
 dayjs.extend(relativeTime);
 
 export interface ParkingsTableComponentRefType {
-  refetch: Function;
+  refetch: () => void;
 }
 
 const ParkingsTableComponent = forwardRef((props, ref) => {
@@ -37,21 +37,13 @@ const ParkingsTableComponent = forwardRef((props, ref) => {
   const [parkings, setParkings] = useState<Parking[]>([]);
   const [currentParking, setCurrentParking] = useState<Parking>();
 
-  const {
-    isOpen: isConfirmOpen,
-    onOpen: onConfirmOpen,
-    onClose: onConfirmClose,
-  } = useDisclosure();
+  const { isOpen: isConfirmOpen, onOpen: onConfirmOpen, onClose: onConfirmClose } = useDisclosure();
   const confirmCancelRef = useRef(null);
 
-  const {
-    isOpen: isDetailsOpen,
-    onOpen: onDetailsOpen,
-    onClose: onDetailsClose,
-  } = useDisclosure();
+  const { isOpen: isDetailsOpen, onOpen: onDetailsOpen, onClose: onDetailsClose } = useDisclosure();
   const detailsCancelRef = useRef(null);
 
-  const [{ data: parkingsResponse }, refetch] = useAxios("/parkings");
+  const [{ data: parkingsResponse }, refetch] = useAxios('/parkings');
 
   useEffect(() => {
     if (parkingsResponse !== undefined) {
@@ -62,7 +54,7 @@ const ParkingsTableComponent = forwardRef((props, ref) => {
   useImperativeHandle(
     ref,
     (): ParkingsTableComponentRefType => ({
-      refetch: () => refetch(),
+      refetch: () => refetch()
     })
   );
 
@@ -74,14 +66,11 @@ const ParkingsTableComponent = forwardRef((props, ref) => {
   const timeOut = async (parking: Parking) => {
     onConfirmClose();
 
-    const { data: createParkingResponse } = await api.post<Parking>(
-      "/parkings",
-      {
-        entryPointId: 0,
-        vehicleId: parking.vehicleId,
-        action: "timeOut",
-      }
-    );
+    const { data: createParkingResponse } = await api.post<Parking>('/parkings', {
+      entryPointId: 0,
+      vehicleId: parking.vehicleId,
+      action: 'timeOut'
+    });
 
     setCurrentParking(createParkingResponse);
     onDetailsOpen();
@@ -103,8 +92,7 @@ const ParkingsTableComponent = forwardRef((props, ref) => {
             </AlertDialogHeader>
 
             <AlertDialogBody>
-              Are you sure you want to time out? You can't undo this action
-              afterwards.
+              Are you sure you want to time out? You can't undo this action afterwards.
             </AlertDialogBody>
 
             <AlertDialogFooter>
@@ -136,16 +124,12 @@ const ParkingsTableComponent = forwardRef((props, ref) => {
 
             <AlertDialogBody>
               <UnorderedList>
+                <ListItem>Plate Number: {currentParking?.__vehicle__.plateNumber}</ListItem>
                 <ListItem>
-                  Plate Number: {currentParking?.__vehicle__.plateNumber}
+                  Time In: {dayjs(currentParking?.timeIn).format('YYYY-MM-DD HH:mm:ss')}
                 </ListItem>
                 <ListItem>
-                  Time In:{" "}
-                  {dayjs(currentParking?.timeIn).format("YYYY-MM-DD HH:mm:ss")}
-                </ListItem>
-                <ListItem>
-                  Time Out:{" "}
-                  {dayjs(currentParking?.timeOut).format("YYYY-MM-DD HH:mm:ss")}
+                  Time Out: {dayjs(currentParking?.timeOut).format('YYYY-MM-DD HH:mm:ss')}
                 </ListItem>
                 <ListItem>Fee: {currentParking?.fee}</ListItem>
               </UnorderedList>
@@ -184,11 +168,9 @@ const ParkingsTableComponent = forwardRef((props, ref) => {
                     ? dayjs(parking.timeIn).to(parking.timeOut, true)
                     : dayjs(parking.timeIn).fromNow(true)}
                 </Td>
-                <Td>{dayjs(parking.timeIn).format("YYYY-MM-DD HH:mm:ss")}</Td>
+                <Td>{dayjs(parking.timeIn).format('YYYY-MM-DD HH:mm:ss')}</Td>
                 <Td>
-                  {parking.timeOut
-                    ? dayjs(parking.timeOut).format("YYYY-MM-DD HH:mm:ss")
-                    : "NA"}
+                  {parking.timeOut ? dayjs(parking.timeOut).format('YYYY-MM-DD HH:mm:ss') : 'NA'}
                 </Td>
                 <Td>
                   <Button
@@ -197,7 +179,7 @@ const ParkingsTableComponent = forwardRef((props, ref) => {
                     size="md"
                     disabled={parking.timeOut !== null}
                   >
-                    {parking.timeOut !== null ? "Timed Out" : "Time Out"}
+                    {parking.timeOut !== null ? 'Timed Out' : 'Time Out'}
                   </Button>
                 </Td>
               </Tr>

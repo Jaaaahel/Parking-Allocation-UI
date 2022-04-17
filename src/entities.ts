@@ -21,9 +21,9 @@ export interface Parking {
 }
 
 export enum ParkingType {
-  Small = "small",
-  Medium = "medium",
-  Large = "large",
+  Small = 'small',
+  Medium = 'medium',
+  Large = 'large'
 }
 
 export interface ParkingSlot {
@@ -41,9 +41,9 @@ export interface ParkingSlot {
 }
 
 export enum VehicleType {
-  Small = "small",
-  Medium = "medium",
-  Large = "large",
+  Small = 'small',
+  Medium = 'medium',
+  Large = 'large'
 }
 
 export interface Vehicle {

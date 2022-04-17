@@ -1,5 +1,5 @@
-import { FC, FormEvent, useEffect, useState } from "react";
-import useAxios from "axios-hooks";
+import { FC, FormEvent, useEffect, useState } from 'react';
+import useAxios from 'axios-hooks';
 import {
   Alert,
   AlertIcon,
@@ -11,19 +11,19 @@ import {
   Radio,
   RadioGroup,
   Select,
-  Stack,
-} from "@chakra-ui/react";
+  Stack
+} from '@chakra-ui/react';
 import {
   CreateVehicleParkingInput,
   CreateVehicleParkingInputKeys,
   EntryPoint,
   Parking,
-  Vehicle,
-} from "../entities";
-import { getInstance, isAxiosError } from "../services/api";
+  Vehicle
+} from '../entities';
+import { getInstance, isAxiosError } from '../services/api';
 
 export interface AddParkingComponentProps {
-  onParkingCreate: Function;
+  onParkingCreate: () => void;
 }
 
 const AddParkingComponent: FC<AddParkingComponentProps> = (props) => {
@@ -34,7 +34,7 @@ const AddParkingComponent: FC<AddParkingComponentProps> = (props) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [errorMessages, setErrorMessages] = useState<string[]>();
 
-  const [{ data: entryPointsResponse }] = useAxios("/entrypoints");
+  const [{ data: entryPointsResponse }] = useAxios('/entrypoints');
 
   useEffect(() => {
     if (entryPointsResponse !== undefined) {
@@ -59,16 +59,12 @@ const AddParkingComponent: FC<AddParkingComponentProps> = (props) => {
     setErrorMessages([]);
     setLoading(true);
 
-    const getVehicleByPlateNumber = async (
-      plateNumber?: string
-    ): Promise<Vehicle | undefined> => {
+    const getVehicleByPlateNumber = async (plateNumber?: string): Promise<Vehicle | undefined> => {
       try {
-        const { data: getVehicleResponse } = await api.get(
-          `/vehicles/plateNumber/${plateNumber}`
-        );
+        const { data: getVehicleResponse } = await api.get(`/vehicles/plateNumber/${plateNumber}`);
 
         return getVehicleResponse;
-      } catch (e: any) {
+      } catch (error: unknown) {
         return undefined;
       }
     };
@@ -77,39 +73,33 @@ const AddParkingComponent: FC<AddParkingComponentProps> = (props) => {
       let vehicle = await getVehicleByPlateNumber(parking?.plateNumber);
 
       if (vehicle && vehicle?.vehicleType !== parking?.vehicleType) {
-        setErrorMessages(["Vehicle with the same plate number already exist"]);
+        setErrorMessages(['Vehicle with the same plate number already exist']);
         return;
       }
 
       if (!vehicle) {
-        const { data: createVehicleResponse } = await api.post<Vehicle>(
-          "/vehicles",
-          {
-            plateNumber: parking?.plateNumber,
-            vehicleType: parking?.vehicleType,
-          }
-        );
+        const { data: createVehicleResponse } = await api.post<Vehicle>('/vehicles', {
+          plateNumber: parking?.plateNumber,
+          vehicleType: parking?.vehicleType
+        });
 
         vehicle = createVehicleResponse;
       }
 
-      const { data: createParkingResponse } = await api.post<Parking>(
-        "/parkings",
-        {
-          entryPointId: Number(parking?.entryPointId),
-          vehicleId: vehicle.id,
-          action: "timeIn",
-        }
-      );
+      const { data: createParkingResponse } = await api.post<Parking>('/parkings', {
+        entryPointId: Number(parking?.entryPointId),
+        vehicleId: vehicle.id,
+        action: 'timeIn'
+      });
 
       if (props.onParkingCreate) {
-        props.onParkingCreate(createParkingResponse);
+        props.onParkingCreate();
       }
-    } catch (e: any) {
-      if (isAxiosError(e)) {
-        let message = e.response.data.message;
+    } catch (error: any) {
+      if (isAxiosError(error)) {
+        let message = error.response.data.message;
 
-        if (typeof message === "string") {
+        if (typeof message === 'string') {
           message = [message];
         }
 
@@ -136,13 +126,13 @@ const AddParkingComponent: FC<AddParkingComponentProps> = (props) => {
         <Input
           id="plate-number"
           placeholder="Plate Number"
-          onChange={(e) => setFieldValue("plateNumber", e.target.value)}
+          onChange={(e) => setFieldValue('plateNumber', e.target.value)}
         />
       </FormControl>
 
       <FormControl mb={2} isRequired>
         <FormLabel>Vehicle Type</FormLabel>
-        <RadioGroup onChange={(e) => setFieldValue("vehicleType", e)}>
+        <RadioGroup onChange={(e) => setFieldValue('vehicleType', e)}>
           <HStack spacing="50px">
             <Radio value="small">Small</Radio>
             <Radio value="medium">Medium</Radio>
@@ -166,7 +156,7 @@ const AddParkingComponent: FC<AddParkingComponentProps> = (props) => {
         <FormLabel>Entry Point</FormLabel>
         <Select
           placeholder="Select entry point"
-          onChange={(e) => setFieldValue("entryPointId", e.target.value)}
+          onChange={(e) => setFieldValue('entryPointId', e.target.value)}
         >
           {entryPoints.map((entryPoint, i) => (
             <option value={entryPoint.id} key={i}>

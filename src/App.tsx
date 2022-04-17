@@ -1,27 +1,21 @@
-import { Grid, GridItem } from "@chakra-ui/react";
-import { createRef } from "react";
-import AddParkingComponent from "./components/AddParkingComponent";
+import { Grid, GridItem } from '@chakra-ui/react';
+import { createRef } from 'react';
+import AddParkingComponent from './components/AddParkingComponent';
 import ParkingsTableComponent, {
-  ParkingsTableComponentRefType,
-} from "./components/ParkingsTableComponent";
-import { Parking } from "./entities";
+  ParkingsTableComponentRefType
+} from './components/ParkingsTableComponent';
 
 function App() {
   const parkingsTableRef = createRef<ParkingsTableComponentRefType>();
 
-  const onParkingCreate = (data: Parking) => {
+  const onParkingCreate = () => {
     if (parkingsTableRef.current) {
       parkingsTableRef.current.refetch();
     }
   };
 
   return (
-    <Grid
-      h="200px"
-      templateRows="repeat(2, 1fr)"
-      templateColumns="repeat(5, 1fr)"
-      gap={4}
-    >
+    <Grid h="200px" templateRows="repeat(2, 1fr)" templateColumns="repeat(5, 1fr)" gap={4}>
       <GridItem rowSpan={2} colSpan={1} p={4}>
         <AddParkingComponent onParkingCreate={onParkingCreate} />
       </GridItem>

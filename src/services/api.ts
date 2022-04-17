@@ -1,11 +1,11 @@
-import axios, { Axios } from "axios";
+import axios, { Axios } from 'axios';
 
 let instance: Axios;
 
 export function getInstance() {
   if (!instance) {
     instance = axios.create({
-      baseURL: process.env.REACT_APP_API_URL,
+      baseURL: process.env.REACT_APP_API_URL
     });
   }
 
